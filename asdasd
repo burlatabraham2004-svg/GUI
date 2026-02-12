@@ -1,0 +1,92 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def calculate_grade():
+    try:
+        # Get data from entries
+        student_id = entry_id.get()
+        name = entry_name.get()
+        course = entry_course.get()
+        subject = entry_subject.get()
+        
+        # Calculate Average
+        prelim = float(entry_prelim.get())
+        midterm = float(entry_midterm.get())
+        final = float(entry_final.get())
+        
+        average = (prelim * 0.20) + (midterm * 0.30) + (final * 0.50)
+        remarks = "PASSED" if average >= 75 else "FAILED"
+        
+        # Display Results
+        result_text = (
+            f"---------------------------\n"
+            f"Student ID: {student_id}\n"
+            f"Student Name: {name}\n"
+            f"Course: {course}\n"
+            f"Subject: {subject}\n"
+            f"Average: {average:.2f}\n"
+            f"Remarks: {remarks}\n"
+            f"---------------------------\n"
+        )
+        text_display.insert(tk.END, result_text)
+        
+        # Clear inputs for next entry
+        clear_fields()
+        
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid numbers for grades.")
+
+def clear_fields():
+    entry_id.delete(0, tk.END)
+    entry_name.delete(0, tk.END)
+    entry_course.delete(0, tk.END)
+    entry_subject.delete(0, tk.END)
+    entry_prelim.delete(0, tk.END)
+    entry_midterm.delete(0, tk.END)
+    entry_final.delete(0, tk.END)
+
+# Setup Window
+root = tk.Tk()
+root.title("Student Grading System")
+root.geometry("300x50")
+
+# Create UI Elements
+fields = [
+    ("Student ID:", "entry_id"),
+    ("Name:", "entry_name"),
+    ("Course:", "entry_course"),
+    ("Subject:", "entry_subject"),
+    ("Prelim Grade:", "entry_prelim"),
+    ("Midterm Grade:", "entry_midterm"),
+    ("Final Grade:", "entry_final")
+]
+
+entries = {}
+for label_text, var_name in fields:
+    row = tk.Frame(root)
+    row.pack(side=tk.TOP, fill=tk.X, padx=20, pady=5)
+    lab = tk.Label(row, width=15, text=label_text, anchor='w')
+    ent = tk.Entry(row)
+    lab.pack(side=tk.LEFT)
+    ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
+    entries[var_name] = ent
+
+# Assign entries to variables for easy access
+entry_id = entries["entry_id"]
+entry_name = entries["entry_name"]
+entry_course = entries["entry_course"]
+entry_subject = entries["entry_subject"]
+entry_prelim = entries["entry_prelim"]
+entry_midterm = entries["entry_midterm"]
+entry_final = entries["entry_final"]
+
+# Calculate Button
+btn_calc = tk.Button(root, text="Calculate & Add", command=calculate_grade, bg="green", fg="white")
+btn_calc.pack(pady=20)
+
+# Result Display Area
+text_display = tk.Text(root, height=10, width=45)
+text_display.pack(padx=20, pady=10)
+
+root.mainloop()
+
