@@ -1,0 +1,153 @@
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+
+# ------------------ FUNCTIONS ------------------ #
+
+def compute_payroll():
+    try:
+        emp_no = entry_emp_no.get()
+        emp_name = entry_emp_name.get()
+        rate = float(entry_rate.get())
+        days = float(entry_days.get())
+        sss = float(entry_sss.get())
+        philhealth = float(entry_philhealth.get())
+        cash_advance = float(entry_cash.get())
+
+        if emp_no == "" or emp_name == "":
+            messagebox.showerror("Input Error", "Please fill all required fields.")
+            return
+
+        gross_pay = rate * days
+        total_deductions = sss + philhealth + cash_advance
+        net_pay = gross_pay - total_deductions
+
+        lbl_gross_value.config(text=f"{gross_pay:,.2f}")
+        lbl_total_ded_value.config(text=f"{total_deductions:,.2f}")
+        lbl_net_value.config(text=f"{net_pay:,.2f}")
+
+    except ValueError:
+        messagebox.showerror("Input Error", "Please enter valid numbers.")
+
+
+def clear_fields():
+    entry_emp_no.delete(0, tk.END)
+    entry_emp_name.delete(0, tk.END)
+    entry_rate.delete(0, tk.END)
+    entry_days.delete(0, tk.END)
+    entry_sss.delete(0, tk.END)
+    entry_philhealth.delete(0, tk.END)
+    entry_cash.delete(0, tk.END)
+
+    lbl_gross_value.config(text="0.00")
+    lbl_total_ded_value.config(text="0.00")
+    lbl_net_value.config(text="0.00")
+
+
+# ------------------ WINDOW ------------------ #
+
+root = tk.Tk()
+root.title("Simple Payroll System")
+root.geometry("750x600")
+root.config(bg="#1e1e2f")
+
+# Style
+style = ttk.Style()
+style.theme_use("clam")
+
+# ------------------ HEADER ------------------ #
+
+header = tk.Label(root, text="PAYROLL SYSTEM",
+                  font=("Segoe UI", 22, "bold"),
+                  bg="#1e1e2f", fg="#ffffff")
+header.pack(pady=15)
+
+# ------------------ MAIN FRAME ------------------ #
+
+main_frame = tk.Frame(root, bg="#2c2f4a", bd=0)
+main_frame.pack(padx=20, pady=10, fill="both", expand=True)
+
+# ------------------ EMPLOYEE INFO ------------------ #
+
+info_frame = tk.LabelFrame(main_frame, text="Employee Information",
+                           font=("Segoe UI", 12, "bold"),
+                           bg="#2c2f4a", fg="white", padx=10, pady=10)
+info_frame.pack(fill="x", padx=10, pady=10)
+
+tk.Label(info_frame, text="Employee Number:", bg="#2c2f4a", fg="white").grid(row=0, column=0, sticky="w")
+entry_emp_no = tk.Entry(info_frame, width=25)
+entry_emp_no.grid(row=0, column=1, padx=10, pady=5)
+
+tk.Label(info_frame, text="Employee Name:", bg="#2c2f4a", fg="white").grid(row=1, column=0, sticky="w")
+entry_emp_name = tk.Entry(info_frame, width=25)
+entry_emp_name.grid(row=1, column=1, padx=10, pady=5)
+
+tk.Label(info_frame, text="Rate per Day:", bg="#2c2f4a", fg="white").grid(row=2, column=0, sticky="w")
+entry_rate = tk.Entry(info_frame, width=25)
+entry_rate.grid(row=2, column=1, padx=10, pady=5)
+
+tk.Label(info_frame, text="Number of Days Worked:", bg="#2c2f4a", fg="white").grid(row=3, column=0, sticky="w")
+entry_days = tk.Entry(info_frame, width=25)
+entry_days.grid(row=3, column=1, padx=10, pady=5)
+
+# ------------------ DEDUCTIONS ------------------ #
+
+ded_frame = tk.LabelFrame(main_frame, text="Deductions",
+                          font=("Segoe UI", 12, "bold"),
+                          bg="#2c2f4a", fg="white", padx=10, pady=10)
+ded_frame.pack(fill="x", padx=10, pady=10)
+
+tk.Label(ded_frame, text="SSS:", bg="#2c2f4a", fg="white").grid(row=0, column=0, sticky="w")
+entry_sss = tk.Entry(ded_frame, width=25)
+entry_sss.grid(row=0, column=1, padx=10, pady=5)
+
+tk.Label(ded_frame, text="PhilHealth:", bg="#2c2f4a", fg="white").grid(row=1, column=0, sticky="w")
+entry_philhealth = tk.Entry(ded_frame, width=25)
+entry_philhealth.grid(row=1, column=1, padx=10, pady=5)
+
+tk.Label(ded_frame, text="Cash Advance:", bg="#2c2f4a", fg="white").grid(row=2, column=0, sticky="w")
+entry_cash = tk.Entry(ded_frame, width=25)
+entry_cash.grid(row=2, column=1, padx=10, pady=5)
+
+# ------------------ RESULTS ------------------ #
+
+result_frame = tk.LabelFrame(main_frame, text="Payroll Summary",
+                             font=("Segoe UI", 12, "bold"),
+                             bg="#2c2f4a", fg="white", padx=10, pady=10)
+result_frame.pack(fill="x", padx=10, pady=10)
+
+tk.Label(result_frame, text="Gross Pay:", bg="#2c2f4a", fg="#00ffcc").grid(row=0, column=0, sticky="w")
+lbl_gross_value = tk.Label(result_frame, text="0.00",
+                           bg="#2c2f4a", fg="#00ffcc", font=("Segoe UI", 12, "bold"))
+lbl_gross_value.grid(row=0, column=1, padx=10, pady=5)
+
+tk.Label(result_frame, text="Total Deductions:", bg="#2c2f4a", fg="#ffcc00").grid(row=1, column=0, sticky="w")
+lbl_total_ded_value = tk.Label(result_frame, text="0.00",
+                               bg="#2c2f4a", fg="#ffcc00", font=("Segoe UI", 12, "bold"))
+lbl_total_ded_value.grid(row=1, column=1, padx=10, pady=5)
+
+tk.Label(result_frame, text="Net Pay:", bg="#2c2f4a", fg="#00ff66").grid(row=2, column=0, sticky="w")
+lbl_net_value = tk.Label(result_frame, text="0.00",
+                         bg="#2c2f4a", fg="#00ff66", font=("Segoe UI", 14, "bold"))
+lbl_net_value.grid(row=2, column=1, padx=10, pady=5)
+
+# ------------------ BUTTONS ------------------ #
+
+btn_frame = tk.Frame(main_frame, bg="#2c2f4a")
+btn_frame.pack(pady=15)
+
+tk.Button(btn_frame, text="Compute", width=12, bg="#00b894",
+          fg="white", font=("Segoe UI", 10, "bold"),
+          command=compute_payroll).grid(row=0, column=0, padx=10)
+
+tk.Button(btn_frame, text="Clear", width=12, bg="#0984e3",
+          fg="white", font=("Segoe UI", 10, "bold"),
+          command=clear_fields).grid(row=0, column=1, padx=10)
+
+tk.Button(btn_frame, text="Exit", width=12, bg="#d63031",
+          fg="white", font=("Segoe UI", 10, "bold"),
+          command=root.destroy).grid(row=0, column=2, padx=10)
+
+# ------------------ RUN ------------------ #
+
+root.mainloop()
