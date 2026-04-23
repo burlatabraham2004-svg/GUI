@@ -1,0 +1,198 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+# ================= LOGIN WINDOW =================
+def login_window():
+    login_win = tk.Toplevel(root)
+    login_win.title("Login")
+    login_win.geometry("300x220")
+    login_win.configure(bg="#ecf0f1")
+
+    tk.Label(login_win, text="Username", font=("Segoe UI", 12), bg="#ecf0f1").pack(pady=5)
+    username_var = tk.StringVar()
+    tk.Entry(login_win, textvariable=username_var, font=("Segoe UI", 12)).pack(pady=5)
+
+    tk.Label(login_win, text="Password", font=("Segoe UI", 12), bg="#ecf0f1").pack(pady=5)
+    password_var = tk.StringVar()
+    tk.Entry(login_win, textvariable=password_var, font=("Segoe UI", 12), show="*").pack(pady=5)
+
+    def verify():
+        if username_var.get() == "admin" and password_var.get() == "1234":
+            login_win.destroy()
+            build_payroll_system()
+        else:
+            messagebox.showerror("Error", "Invalid Username or Password")
+
+    tk.Button(login_win, text="Login", bg="#27ae60", fg="white", width=12, command=verify).pack(pady=10)
+
+# ================= PAYROLL SYSTEM =================
+def build_payroll_system():
+    root.deiconify()
+    root.title("Payroll System")
+    root.geometry("900x650")
+    root.configure(bg="#2c3e50")
+
+    # Header
+    header = tk.Frame(root, bg="#1f618d", height=60)
+    header.pack(fill="x")
+    tk.Label(header, text="Payroll System", font=("Segoe UI", 18, "bold"),
+             bg="#1f618d", fg="white").pack(pady=10)
+
+    container = tk.Frame(root, bg="#2c3e50")
+    container.pack(fill="both", expand=True, padx=15, pady=10)
+
+    left = tk.Frame(container, bg="#ecf0f1", padx=10, pady=10)
+    right = tk.Frame(container, bg="#ecf0f1", padx=10, pady=10)
+    left.grid(row=0, column=0, sticky="nsew", padx=10)
+    right.grid(row=0, column=1, sticky="nsew", padx=10)
+
+    container.columnconfigure(0, weight=1)
+    container.columnconfigure(1, weight=1)
+
+    # ================= VARIABLES =================
+    emp_no = tk.StringVar()
+    emp_name = tk.StringVar()
+    gender = tk.StringVar()
+    position = tk.StringVar()
+    rate = tk.StringVar()
+    days = tk.StringVar()
+    sss = tk.StringVar()
+    philhealth = tk.StringVar()
+    cash_adv = tk.StringVar()
+
+    # ================= FUNCTIONS =================
+    def compute():
+        try:
+            g = float(rate.get()) * float(days.get())
+            d = float(sss.get()) + float(philhealth.get()) + float(cash_adv.get())
+            n = g - d
+
+            # UPDATE SUMMARY DISPLAY
+            gross_label.config(text=f"₱ {g:,.2f}")
+            ded_label.config(text=f"₱ {d:,.2f}")
+            net_label.config(text=f"₱ {n:,.2f}")
+
+            # ADD RECORD TO TABLE
+            tree.insert("", "end", values=(
+                emp_no.get(),
+                emp_name.get(),
+                gender.get(),
+                position.get(),
+                sss.get(),
+                philhealth.get(),
+                cash_adv.get(),
+                f"{g:,.2f}",
+                f"{d:,.2f}",
+                f"{n:,.2f}"
+            ))
+
+        except:
+            messagebox.showerror("Error", "Invalid input!")
+
+    def clear():
+        for var in [emp_no, emp_name, gender, position, rate, days, sss, philhealth, cash_adv]:
+            var.set("")
+        gross_label.config(text="")
+        ded_label.config(text="")
+        net_label.config(text="")
+
+    def delete_record():
+        selected = tree.selection()
+        for item in selected:
+            tree.delete(item)
+
+    def label(parent, text):
+        return tk.Label(parent, text=text, bg="#ecf0f1", font=("Segoe UI", 11))
+
+    def entry(parent, var):
+        return tk.Entry(parent, textvariable=var, font=("Segoe UI", 11))
+
+    # ================= LEFT PANEL =================
+    tk.Label(left, text="Employee Info", font=("Segoe UI", 14, "bold"), bg="#ecf0f1").grid(row=0, columnspan=2, pady=10)
+
+    label(left, "Employee No").grid(row=1, column=0, sticky="w")
+    entry(left, emp_no).grid(row=1, column=1)
+
+    label(left, "Employee Name").grid(row=2, column=0, sticky="w")
+    entry(left, emp_name).grid(row=2, column=1)
+
+    label(left, "Gender").grid(row=3, column=0, sticky="w")
+    gframe = tk.Frame(left, bg="#ecf0f1")
+    gframe.grid(row=3, column=1)
+    tk.Radiobutton(gframe, text="Male", variable=gender, value="Male", bg="#ecf0f1").pack(side="left")
+    tk.Radiobutton(gframe, text="Female", variable=gender, value="Female", bg="#ecf0f1").pack(side="left")
+
+    label(left, "Position").grid(row=4, column=0, sticky="w")
+    ttk.Combobox(left, textvariable=position,
+                 values=["Manager", "Supervisor", "Staff", "Clerk"],
+                 state="readonly").grid(row=4, column=1)
+
+    # ================= RIGHT PANEL =================
+    tk.Label(right, text="Payroll Details", font=("Segoe UI", 14, "bold"), bg="#ecf0f1").grid(row=0, columnspan=2, pady=10)
+
+    label(right, "Rate/Day").grid(row=1, column=0)
+    entry(right, rate).grid(row=1, column=1)
+
+    label(right, "Days Worked").grid(row=2, column=0)
+    entry(right, days).grid(row=2, column=1)
+
+    label(right, "SSS").grid(row=3, column=0)
+    entry(right, sss).grid(row=3, column=1)
+
+    label(right, "PhilHealth").grid(row=4, column=0)
+    entry(right, philhealth).grid(row=4, column=1)
+
+    label(right, "Cash Advance").grid(row=5, column=0)
+    entry(right, cash_adv).grid(row=5, column=1)
+
+    # ================= SUMMARY PANEL =================
+    summary = tk.Frame(right, bg="#d5dbdb", pady=10)
+    summary.grid(row=6, column=0, columnspan=2, sticky="ew", pady=10)
+
+    tk.Label(summary, text="Payroll Summary",
+             font=("Segoe UI", 12, "bold"),
+             bg="#d5dbdb").pack()
+
+    gross_label = tk.Label(summary, text="", fg="#2e86c1",
+                           bg="#d5dbdb", font=("Segoe UI", 10, "bold"))
+    gross_label.pack()
+
+    ded_label = tk.Label(summary, text="", fg="#e74c3c",
+                         bg="#d5dbdb", font=("Segoe UI", 10, "bold"))
+    ded_label.pack()
+
+    net_label = tk.Label(summary, text="", fg="#27ae60",
+                         bg="#d5dbdb", font=("Segoe UI", 10, "bold"))
+    net_label.pack()
+
+    # ================= TABLE =================
+    table_frame = tk.Frame(root)
+    table_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+    columns = ("emp_no", "name", "gender", "position",
+               "sss", "philhealth", "cash_adv",
+               "gross", "deductions", "net")
+
+    tree = ttk.Treeview(table_frame, columns=columns, show="headings")
+
+    for col in columns:
+        tree.heading(col, text=col.title())
+        tree.column(col, width=100)
+
+    tree.pack(fill="both", expand=True)
+
+    # ================= BUTTONS =================
+    btn = tk.Frame(root, bg="#2c3e50")
+    btn.pack(pady=10)
+
+    tk.Button(btn, text="Compute", bg="#27ae60", fg="white", width=12, command=compute).grid(row=0, column=0, padx=5)
+    tk.Button(btn, text="Clear", bg="#f39c12", fg="white", width=12, command=clear).grid(row=0, column=1, padx=5)
+    tk.Button(btn, text="Delete", bg="#8e44ad", fg="white", width=12, command=delete_record).grid(row=0, column=2, padx=5)
+    tk.Button(btn, text="Exit", bg="#c0392b", fg="white", width=12, command=root.destroy).grid(row=0, column=3, padx=5)
+
+# ================= MAIN =================
+root = tk.Tk()
+root.withdraw()
+
+login_window()
+root.mainloop()
